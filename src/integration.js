@@ -147,6 +147,34 @@ JsHamcrest.Integration = (function() {
     },
 
     /**
+     * Node integration.
+     */
+     
+    Node: function(params) {
+
+      params = params ? params : {};
+      var target = params.scope || self;
+
+      // allow assert to be externally defined
+      // to allow use of external assert libs such as testosterone
+      var assert = params.assert || require('assert');
+
+      JsHamcrest.Integration.copyMembers(target);
+
+      target.assertThat = function(actual, matcher, message) {
+        return JsHamcrest.Operators.assert(actual, matcher, {
+          message: message,
+          fail: function(message) {
+            assert.fail("fail", message);
+          },
+          pass: function(message) {
+            assert.ok("pass", message);
+          }
+        });
+      };
+    },
+  
+    /**
      * JsUnitTest integration.
      */
     JsUnitTest: function(params) {
